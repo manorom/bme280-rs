@@ -16,7 +16,7 @@
     unused_imports,
     unused_must_use
 )]
-#![no_std]
+//#![no_std]
 
 //! A platform agnostic Rust driver for the Bosch BME280 and BMP280, based on the
 //! [`embedded-hal`](https://github.com/japaric/embedded-hal) traits.
@@ -149,6 +149,31 @@ pub enum Error<E> {
     NoCalibrationData,
     /// Chip ID doesn't match expected value
     UnsupportedChip,
+}
+
+impl<E> std::fmt::Display for Error<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Error::CompensationFailed => {
+                write!(f, "Failed to compensate wraw measurement")
+            },
+            Error::I2c(_) => {
+                write!(f, "Failed to parse sensor data")
+            },
+            Error::InvalidData => {
+                write!(f, "Failed to parse sensor data")
+            }
+            Error::NoCalibrationData => {
+                write!(f, "No calibration data is available (probably forgot to call or check BME280::init for failure)")
+            },
+            Error::UnsupportedChip => {
+                write!(f, "Chip ID doesn't match expected value")
+            }
+        }
+    }
+}
+
+impl<E: std::fmt::Debug> std::error::Error for Error<E> {
 }
 
 /// BME280 operating mode
